@@ -1,0 +1,1094 @@
+\documentclass[12pt, a4paper, oneside, openany]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T5,T1]{fontenc}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{changepage}
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{ragged2e}
+
+\DeclareUnicodeCharacter{201C}{``}
+\DeclareUnicodeCharacter{201D}{''}
+\DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Báo cáo cuối kỳ Cơ sở dữ liệu},
+    pdfpagemode=FullScreen,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{Báo cáo cuối kỳ CSDL}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[C]{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+}
+
+\addto\captionsvietnamese{
+  \renewcommand{\chaptername}{Chương}
+  \renewcommand{\contentsname}{Mục lục}
+  \renewcommand{\listfigurename}{Danh mục hình ảnh}
+  \renewcommand{\listtablename}{Danh mục bảng biểu}
+  \renewcommand{\bibname}{Tài liệu tham khảo}
+  \renewcommand{\appendixname}{Phụ lục}
+}
+
+\definecolor{mainblue}{HTML}{000000}
+\definecolor{lightblue}{HTML}{FFFFFF}
+\definecolor{lightgreen}{HTML}{FFFFFF}
+\definecolor{lightyellow}{HTML}{FFFFFF}
+
+\lstdefinelanguage{SQL}{
+    morekeywords={
+        CREATE,DATABASE,IF,NOT,EXISTS,USE,TABLE,PRIMARY,KEY,FOREIGN,
+        REFERENCES,ON,UPDATE,CASCADE,DELETE,RESTRICT,CHECK,UNIQUE,
+        DEFAULT,GENERATED,ALWAYS,AS,CASE,WHEN,THEN,ELSE,END,STORED,
+        ENGINE,CHARACTER,SET,COLLATE,INT,VARCHAR,DATE,DATETIME,
+        BOOLEAN,BIGINT,UNSIGNED,AUTO_INCREMENT,DECIMAL,NULL,TRUE,FALSE,
+        VIEW,OR,REPLACE,PROCEDURE,FUNCTION,RETURNS,BEGIN,DECLARE,INTO,
+        SIGNAL,SQLSTATE,CALL,GRANT,PRIVILEGES,USER,IDENTIFIED,FLUSH,
+        DELIMITER,READS,DATA,DETERMINISTIC,JOIN,LEFT,GROUP,BY,ORDER,
+        SELECT,FROM,WHERE,HAVING,COUNT,MAX,MIN,SUM,DATEDIFF,COALESCE
+    },
+    sensitive=false,
+    morecomment=[l]{--},
+    morestring=[b]',
+}
+
+\lstdefinestyle{sqlstyle}{
+    language=SQL,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red!70!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,
+    rulecolor=\color{gray!40},
+    tabsize=2,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false
+}
+\lstset{style=sqlstyle}
+
+\captionsetup[table]{position=bottom,skip=6pt}
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{4pt}
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{I}[1]{>{\normalfont\scriptsize\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{S}[1]{>{\normalfont\scriptsize\RaggedRight\arraybackslash}p{#1}}
+\newcommand{\dbid}[1]{{\normalfont\ttfamily\footnotesize\nolinkurl{#1}}}
+\newcommand{\tabdbid}[1]{{\normalfont\ttfamily\scriptsize\nolinkurl{#1}}}
+
+\newcommand{\evidencefigure}[4]{
+\begin{figure}[H]
+    \centering
+    \IfFileExists{#1}{
+        \makebox[\textwidth][c]{\includegraphics[width=#2\textwidth]{#1}}
+    }{
+        \fbox{\begin{minipage}[c][5.2cm][c]{#2\textwidth}
+            \centering
+            \textit{Minh chứng thực thi được bổ sung tại vị trí này.}\\[0.2cm]
+            {\normalfont\ttfamily\footnotesize #1}
+        \end{minipage}}
+    }
+    \caption{#3}
+    \label{#4}
+\end{figure}
+\normalfont\normalsize\selectfont
+}
+
+\emergencystretch=3em
+\sloppy
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\textbf{ĐẠI HỌC QUỐC GIA HÀ NỘI}\\
+\textbf{TRƯỜNG QUỐC TẾ}\\
+\textbf{KHOA KỸ THUẬT VÀ CÔNG NGHỆ}\\[1.2cm]
+
+{\Large\textbf{BÁO CÁO CUỐI KỲ}}\\[0.35cm]
+{\Large\textbf{HỌC PHẦN CƠ SỞ DỮ LIỆU}}\\[1cm]
+\rule{0.9\textwidth}{0.7pt}\\[0.6cm]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{logo-is.jpg}
+\end{figure}
+
+{\large\textbf{Đề tài: Topic 8 -- MedLink Hospital Device Access}}\\[1cm]
+
+\begin{tabular}{rl}
+\textbf{Giảng viên hướng dẫn:} & Vũ Đức Minh \\
+\textbf{Nhóm thực hiện:} & Nhóm 6 \\
+\textbf{Lớp học phần:} & Cơ sở dữ liệu -- ISV201604 \\
+\textbf{Năm học:} & 2025--2026 \\
+\end{tabular}\\[1cm]
+
+\begin{tabular}{|p{1cm}|p{5.2cm}|p{3.2cm}|p{3.2cm}|}
+\hline
+\textbf{STT} & \textbf{Họ và tên} & \textbf{Mã sinh viên} & \textbf{Vai trò} \\
+\hline
+1 & Trần Đức Minh & 24070419 & Nhóm trưởng \\
+\hline
+2 & Nguyễn Hải Long & 22071100 & Thành viên \\
+\hline
+3 & Đỗ Thị Kiều Oanh & 24070471 & Thành viên \\
+\hline
+4 & Trần Thị Lương Thiện & 24070383 & Thành viên \\
+\hline
+\end{tabular}
+
+\vspace{0.65cm}
+\textbf{Hà Nội, tháng 07 năm 2026}
+\end{center}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\chapter*{LỜI CẢM ƠN}
+\addcontentsline{toc}{chapter}{LỜI CẢM ƠN}
+
+Trước hết, nhóm chúng em xin gửi lời cảm ơn chân thành đến thầy Vũ Đức Minh, giảng viên học phần Cơ sở dữ liệu, đã hướng dẫn và cung cấp các kiến thức nền tảng quan trọng trong quá trình học tập. Những nội dung về mô hình thực thể liên kết, thiết kế cơ sở dữ liệu quan hệ, câu lệnh SQL, view, stored procedure, stored function và phân quyền người dùng là cơ sở để nhóm hoàn thiện bài báo cáo cuối kỳ này.
+
+Trong quá trình thực hiện đề tài \textit{MedLink Hospital Device Access}, nhóm có cơ hội hệ thống lại kiến thức đã học, đồng thời vận dụng vào một bài toán quản lý truy cập thiết bị và dịch vụ trong môi trường bệnh viện. Việc xây dựng dữ liệu mẫu, viết truy vấn, đóng gói logic nghiệp vụ và kiểm thử các trường hợp thành công/lỗi đã giúp nhóm hiểu rõ hơn vai trò của cơ sở dữ liệu trong việc đảm bảo tính nhất quán, an toàn và khả năng khai thác thông tin.
+
+Nhóm chúng em cũng xin cảm ơn Trường Quốc tế, Đại học Quốc gia Hà Nội đã tạo điều kiện học tập và thực hành trong suốt học phần. Do kiến thức và kinh nghiệm còn hạn chế, báo cáo khó tránh khỏi thiếu sót; nhóm rất mong nhận được góp ý của thầy để có thể hoàn thiện hơn trong các bài học và dự án sau.
+
+\clearpage
+
+\chapter*{TÓM TẮT BÁO CÁO}
+\addcontentsline{toc}{chapter}{TÓM TẮT BÁO CÁO}
+
+Báo cáo cuối kỳ tiếp tục phát triển cơ sở dữ liệu \textit{MedLink Hospital Device Access} đã được thiết kế ở bài giữa kỳ. Trọng tâm của bài cuối kỳ là khai thác và vận hành cơ sở dữ liệu thông qua dữ liệu mẫu, các câu truy vấn phân tích, \texttt{VIEW}, stored procedure, stored function, trigger audit, event cleanup ở trạng thái tắt mặc định, index hỗ trợ truy vấn và cơ chế tạo người dùng kèm phân quyền trong MySQL.
+
+Khác với bài giữa kỳ chỉ tập trung vào ERD và câu lệnh \texttt{CREATE TABLE}, báo cáo này bổ sung bản thiết kế final, change log, lớp quy tắc nghiệp vụ, bảng ánh xạ rule sang cơ chế thực thi, bộ dữ liệu mẫu, test case dương/tình huống lỗi, ghi nhận audit và runbook backup/restore. Cách trình bày này nhằm thể hiện rõ không chỉ cơ sở dữ liệu được tạo thành công, mà còn có thể được sử dụng để kiểm soát các nghiệp vụ truy cập thiết bị trong bệnh viện.
+
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+\pagenumbering{arabic}
+
+\chapter{GIỚI THIỆU VÀ PHẠM VI CUỐI KỲ}
+
+\section{Bối cảnh kế thừa}
+
+MedLink Hospital cần quản lý việc nhân sự sử dụng thiết bị để truy cập các máy chủ và dịch vụ y tế nội bộ. Bài giữa kỳ đã xây dựng ERD, mô hình quan hệ và script \texttt{CREATE TABLE} cho các nhóm dữ liệu chính: khoa/phòng, nhân sự, tài khoản, máy chủ, dịch vụ, thiết bị và lịch sử phê duyệt thiết bị truy cập máy chủ.
+
+Ở bài cuối kỳ, cơ sở dữ liệu được mở rộng theo hướng vận hành: có dữ liệu mẫu, có truy vấn phục vụ báo cáo, có view để tái sử dụng kết quả, có stored procedure và function để đóng gói logic nghiệp vụ, đồng thời có user và phân quyền để mô phỏng vai trò sử dụng hệ thống.
+
+\section{Yêu cầu thực hiện}
+
+Các nội dung chính của bài cuối kỳ gồm:
+\begin{itemize}
+    \item Chuẩn bị dữ liệu mẫu đủ để kiểm tra các quan hệ và ràng buộc.
+    \item Viết các câu truy vấn SQL phục vụ báo cáo, kiểm tra và phân tích.
+    \item Tạo các \texttt{VIEW} giúp đơn giản hóa việc xem dữ liệu tổng hợp.
+    \item Tạo stored procedure để thực hiện thao tác nghiệp vụ có kiểm tra điều kiện.
+    \item Tạo stored function để trả về các giá trị tính toán/tình trạng.
+    \item Tạo trigger audit cho nghiệp vụ cấp/thu hồi quyền truy cập máy chủ và event cleanup ở trạng thái \texttt{DISABLE}.
+    \item Bổ sung index, \texttt{SHOW INDEX} và \texttt{EXPLAIN} cho các truy vấn quan trọng.
+    \item Tạo user MySQL và phân quyền theo vai trò.
+    \item Trình bày kế hoạch backup/restore trong môi trường lab/local.
+    \item Kiểm thử các trường hợp thành công và một số trường hợp lỗi dự kiến.
+\end{itemize}
+
+\chapter{THIẾT KẾ FINAL VÀ ĐỐI CHIẾU GIỮA KỲ}
+
+\section{ERD final}
+
+\evidencefigure{figures/final-00-erd.png}{1.25}{ERD final của cơ sở dữ liệu MedLink Hospital Device Access}{fig:erd-final}
+
+Hình \ref{fig:erd-final} là phiên bản ERD final dùng cho phần triển khai cuối kỳ. Sơ đồ giữ các thực thể cốt lõi của bài giữa kỳ gồm khoa/phòng, nhân sự, tài khoản, thiết bị, máy chủ, dịch vụ và quyền truy cập. So với bản giữa kỳ, thiết kế final được bổ sung lớp audit cho nghiệp vụ cấp/thu hồi quyền truy cập và được đối chiếu lại với script DDL để bảo đảm tên bảng, khóa chính, khóa ngoại và quan hệ M:N thống nhất.
+
+\section{Change log so với giữa kỳ}
+
+\begin{longtable}{|L{1.5cm}|L{5.2cm}|L{4.2cm}|L{3.2cm}|}
+\hline
+\textbf{Mã} & \textbf{Thay đổi} & \textbf{Lý do} & \textbf{Tác động} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Mã} & \textbf{Thay đổi} & \textbf{Lý do} & \textbf{Tác động} \\
+\hline
+\endhead
+CH01 & Chuẩn hóa lại subtype của \dbid{hospital_server} thành \dbid{physical_server} và \dbid{virtual_server}. & Phân biệt máy chủ vật lý và máy chủ ảo rõ hơn. & Bổ sung quan hệ 1--0..1 và FK host vật lý cho máy chủ ảo. \\
+\hline
+CH02 & Chuẩn hóa subtype của \dbid{device} thành \dbid{fixed_workstation} và \dbid{mobile_device}. & Mỗi loại thiết bị có thuộc tính riêng. & Tránh để nhiều cột NULL trong bảng \dbid{device}. \\
+\hline
+CH03 & Thêm cột sinh \dbid{security_eligible} trong \dbid{mobile_device}. & Cần kiểm tra nhanh điều kiện bảo mật mobile. & Procedure cấp quyền server dùng cột này để chặn thiết bị không an toàn. \\
+\hline
+CH04 & Thêm unique key \dbid{uq_device_server_one_active}. & Chỉ cho phép một quyền active trên cùng cặp thiết bị--server. & Ngăn trùng active access ở mức CSDL. \\
+\hline
+CH05 & Thêm bảng \dbid{device_server_access_audit}, trigger audit và event cleanup. & Cần ghi nhận lịch sử cấp/thu hồi quyền nhưng vẫn có kế hoạch dọn log cũ trong môi trường vận hành. & Có audit trail tự động khi INSERT/UPDATE quyền truy cập; event cleanup được tạo ở trạng thái \texttt{DISABLE} trong lab. \\
+\hline
+CH06 & Bổ sung index và \texttt{EXPLAIN}. & Đáp ứng yêu cầu khai thác và đánh giá truy vấn cuối kỳ. & Có cơ sở giải thích trade-off giữa tốc độ đọc và chi phí ghi. \\
+\hline
+\caption{Change log giữa thiết kế giữa kỳ và phiên bản cuối kỳ}
+\end{longtable}
+\clearpage
+\section{Mô hình quan hệ final}
+
+\begin{longtable}{|L{4.8cm}|L{8.8cm}|}
+\hline
+\normalfont\normalsize\textbf{Quan hệ} & \textbf{Khóa và thuộc tính chính} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Quan hệ} & \textbf{Khóa và thuộc tính chính} \\
+\hline
+\endhead
+\tabdbid{hospital_department} & PK: \dbid{department_id}; AK: \dbid{department_name}; thuộc tính: tên khoa/phòng, mã hộp thư nội bộ, số điện thoại. \\
+\hline
+\tabdbid{staff_member} & PK: \dbid{staff_id}; FK: \dbid{department_id}; thuộc tính: họ tên, chữ cái đệm, chức danh. \\
+\hline
+\tabdbid{staff_account} & PK/FK: \dbid{staff_id}; AK: \dbid{username}; thuộc tính: mật khẩu băm, thời điểm tạo. \\
+\hline
+\tabdbid{hospital_server} & PK: \dbid{server_id}; AK: \dbid{server_name}, \dbid{ip_address}; thuộc tính: hãng sản xuất, hệ điều hành, phòng máy, loại server. \\
+\hline
+\tabdbid{physical_server} & PK/FK: \dbid{server_id}; biểu diễn subtype máy chủ vật lý. \\
+\hline
+\tabdbid{virtual_server} & PK/FK: \dbid{server_id}; FK: \dbid{physical_host_id}; biểu diễn subtype máy chủ ảo và máy chủ vật lý đang host. \\
+\hline
+\tabdbid{hospital_service} & PK: \dbid{service_id}; AK: \dbid{service_name}; FK: \dbid{server_id}; thuộc tính: tên dịch vụ, ngày bắt đầu. \\
+\hline
+\tabdbid{staff_service_access} & PK: \dbid{(staff_id, service_id)}; FK đến \dbid{staff_account} và \dbid{hospital_service}; thuộc tính quan hệ: ngày cấp quyền. \\
+\hline
+\tabdbid{device} & PK: \dbid{device_id}; FK: \dbid{staff_id}; thuộc tính: hãng, model, ngày đăng ký, loại thiết bị. \\
+\hline
+\tabdbid{fixed_workstation} & PK/FK: \dbid{device_id}; AK: \dbid{static_ip_address}, \dbid{mac_address}; thuộc tính: tòa nhà, phòng. \\
+\hline
+\tabdbid{mobile_device} & PK/FK: \dbid{device_id}; AK: \dbid{serial_no}; thuộc tính: hệ điều hành, phiên bản, khóa màn hình, mã hóa dữ liệu, nhãn đủ điều kiện bảo mật. \\
+\hline
+\tabdbid{device_server_access} & PK: \dbid{access_id}; FK: \dbid{device_id}, \dbid{server_id}; AK: \dbid{(device_id, server_id, approved_date)}; thuộc tính: ngày phê duyệt, ngày thu hồi, cờ active. \\
+\hline
+\tabdbid{device_server_access_audit} & PK: \dbid{audit_id}; FK: \dbid{access_id}; thuộc tính: thiết bị, server, loại hành động, ngày cũ/mới, thời điểm và user thực hiện. \\
+\hline
+\caption{Mô hình quan hệ final}
+\end{longtable}
+\clearpage
+\section{Data dictionary rút gọn}
+
+\begin{longtable}{|L{4.9cm}|L{4.2cm}|L{4.5cm}|}
+\hline
+\normalfont\normalsize\textbf{Bảng/cột} & \textbf{Ý nghĩa} & \textbf{Domain/rule} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Bảng/cột} & \textbf{Ý nghĩa} & \textbf{Domain/rule} \\
+\hline
+\endhead
+\tabdbid{device.device_type} & Phân loại thiết bị. & Chỉ nhận \dbid{WORKSTATION} hoặc \dbid{MOBILE}. \\
+\hline
+\tabdbid{hospital_server.server_type} & Phân loại máy chủ. & Chỉ nhận \dbid{PHYSICAL} hoặc \dbid{VIRTUAL}. \\
+\hline
+\tabdbid{mobile_device.security_eligible} & Thiết bị mobile đủ điều kiện bảo mật hay chưa. & Cột sinh từ khóa màn hình và mã hóa dữ liệu. \\
+\hline
+\tabdbid{device_server_access.revoked_date} & Ngày thu hồi quyền truy cập. & Có thể NULL; nếu có thì không nhỏ hơn ngày phê duyệt. \\
+\hline
+\tabdbid{device_server_access.active_flag} & Cờ hỗ trợ ràng buộc một quyền active. & Cột sinh; bằng 1 khi \dbid{revoked_date} NULL. \\
+\hline
+\tabdbid{device_server_access_audit.action_type} & Loại hành động được trigger ghi nhận. & Chỉ nhận \dbid{GRANT} hoặc \dbid{REVOKE}. \\
+\hline
+\caption{Data dictionary rút gọn cho các cột nghiệp vụ quan trọng}
+\end{longtable}
+
+\section{Nhận xét chuẩn hóa}
+
+Các bảng chính được thiết kế theo hướng đạt 3NF: mỗi bảng mô tả một nhóm thực thể hoặc quan hệ rõ ràng, thuộc tính không khóa phụ thuộc vào khóa chính của chính bảng đó, và các quan hệ M:N được tách thành bảng kết hợp như \dbid{staff_service_access} và \dbid{device_server_access}. Các subtype \dbid{physical_server}/\dbid{virtual_server} và \dbid{fixed_workstation}/\dbid{mobile_device} giúp tránh tình trạng bảng cha chứa nhiều thuộc tính chỉ áp dụng cho một loại bản ghi.
+
+Hai cột \dbid{security_eligible} và \dbid{active_flag} là dữ liệu dẫn xuất có chủ đích. Chúng không thay thế dữ liệu gốc, mà giúp biểu diễn rule nghiệp vụ và tạo ràng buộc kỹ thuật trong MySQL. Bảng audit được tách riêng để không làm thay đổi ý nghĩa lịch sử của bảng quyền truy cập chính.
+
+\begin{longtable}{|L{5.2cm}|L{8.4cm}|}
+\hline
+\normalfont\normalsize\textbf{Quan hệ} & \textbf{Functional dependencies chính} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Quan hệ} & \textbf{Functional dependencies chính} \\
+\hline
+\endhead
+\tabdbid{hospital_department} & \dbid{department_id} $\rightarrow$ \dbid{department_name}, \dbid{internal_mailbox_code}, \dbid{phone_number}. \\
+\hline
+\tabdbid{staff_member} & \dbid{staff_id} $\rightarrow$ \dbid{department_id}, \dbid{last_name}, \dbid{first_name}, \dbid{middle_initial}, \dbid{job_title}. \\
+\hline
+\tabdbid{hospital_server} & \dbid{server_id} $\rightarrow$ \dbid{server_name}, \dbid{manufacturer}, \dbid{ip_address}, \dbid{operating_system}, \dbid{server_room}, \dbid{server_type}. \\
+\hline
+\tabdbid{hospital_service} & \dbid{service_id} $\rightarrow$ \dbid{service_name}, \dbid{service_start_date}, \dbid{server_id}. \\
+\hline
+\tabdbid{device} & \dbid{device_id} $\rightarrow$ \dbid{staff_id}, \dbid{manufacturer}, \dbid{model}, \dbid{registered_date}, \dbid{device_type}. \\
+\hline
+\tabdbid{mobile_device} & \dbid{device_id} $\rightarrow$ \dbid{serial_no}, \dbid{operating_system}, \dbid{os_version}, \dbid{screen_lock_enabled}, \dbid{data_encryption_enabled}, \dbid{security_eligible}. \\
+\hline
+\tabdbid{device_server_access} & \dbid{access_id} $\rightarrow$ \dbid{device_id}, \dbid{server_id}, \dbid{approved_date}, \dbid{revoked_date}, \dbid{active_flag}. \\
+\hline
+\caption{Functional dependencies chính cho các quan hệ quan trọng}
+\end{longtable}
+
+Các phụ thuộc hàm trên cho thấy thuộc tính mô tả phụ thuộc vào khóa của chính quan hệ. Những thuộc tính đặc thù theo subtype được đưa xuống bảng con, còn quan hệ nhiều--nhiều được tách thành bảng kết hợp. Vì vậy thiết kế tránh phụ thuộc bộ phận và phụ thuộc bắc cầu đáng kể trong phạm vi nghiệp vụ của bài.
+
+\chapter{QUY TẮC NGHIỆP VỤ VÀ CƠ CHẾ THỰC THI}
+
+\section{Danh sách quy tắc nghiệp vụ}
+
+\begin{longtable}{|L{1.4cm}|L{6.3cm}|L{5.8cm}|}
+\hline
+\textbf{Mã} & \textbf{Quy tắc nghiệp vụ} & \textbf{Cơ chế thực thi} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Mã} & \textbf{Quy tắc nghiệp vụ} & \textbf{Cơ chế thực thi} \\
+\hline
+\endhead
+BR01 & Mỗi nhân sự thuộc đúng một khoa/phòng hiện tại. & FK \dbid{staff_member.department_id} tham chiếu \dbid{hospital_department}. \\
+\hline
+BR02 & Nhân sự có thể chưa có tài khoản, nhưng quyền sử dụng dịch vụ chỉ cấp cho nhân sự đã có tài khoản. & Bảng \dbid{staff_account}; procedure \dbid{sp_grant_staff_service_access}. \\
+\hline
+BR03 & Một máy chủ chỉ thuộc một trong hai loại: vật lý hoặc ảo. & Cột \dbid{server_type} và \texttt{CHECK}. \\
+\hline
+BR04 & Một dịch vụ chạy trên đúng một máy chủ. & FK \dbid{hospital_service.server_id}. \\
+\hline
+BR05 & Mỗi thiết bị hiện thuộc đúng một nhân sự. & FK \dbid{device.staff_id}. \\
+\hline
+BR06 & Thiết bị phải tồn tại trước khi được cấp quyền truy cập máy chủ. & FK \dbid{device_server_access.device_id}; procedure kiểm tra trước để trả lỗi thân thiện. \\
+\hline
+BR07 & Máy chủ phải tồn tại trước khi nhận thiết bị truy cập. & FK \dbid{device_server_access.server_id}; procedure kiểm tra trước để trả lỗi thân thiện. \\
+\hline
+BR08 & Thiết bị di động chỉ được cấp quyền truy cập máy chủ khi bật khóa màn hình và mã hóa dữ liệu. & Cột sinh \dbid{security_eligible}; procedure kiểm tra trước khi insert. \\
+\hline
+BR09 & Một cặp thiết bị -- máy chủ chỉ có tối đa một quyền truy cập đang active. & Unique key \dbid{uq_device_server_one_active}; procedure kiểm tra trùng active. \\
+\hline
+BR10 & Lịch sử cấp quyền/thu hồi truy cập phải được giữ lại. & Bảng \dbid{device_server_access}; trigger ghi thêm audit vào \dbid{device_server_access_audit}. \\
+\hline
+BR11 & Một quyền truy cập đã bị thu hồi không được thu hồi lại lần nữa. & Procedure \dbid{sp_revoke_device_server_access}. \\
+\hline
+BR12 & Ngày thu hồi không được nhỏ hơn ngày phê duyệt. & \texttt{CHECK} và procedure kiểm tra. \\
+\hline
+BR13 & Nhân sự phải có tài khoản trước khi được cấp quyền sử dụng dịch vụ. & Procedure \dbid{sp_grant_staff_service_access} kiểm tra \dbid{staff_account}. \\
+\hline
+BR14 & Dịch vụ phải tồn tại trước khi được cấp cho nhân sự. & Procedure \dbid{sp_grant_staff_service_access} kiểm tra \dbid{hospital_service}. \\
+\hline
+BR15 & Một nhân sự không được cấp trùng quyền trên cùng một dịch vụ. & PK \dbid{staff_service_access(staff_id, service_id)}; procedure kiểm tra. \\
+\hline
+BR16 & User báo cáo chỉ được xem dữ liệu, user vận hành chỉ được thao tác trên bảng quyền truy cập. & \texttt{CREATE ROLE}, \texttt{CREATE USER} và \texttt{GRANT}. \\
+\hline
+BR17 & Audit log cũ có thể được dọn theo chính sách lưu giữ dữ liệu, nhưng không tự chạy trong môi trường lab. & Event \dbid{ev_cleanup_old_access_audit} được tạo với trạng thái \texttt{DISABLE}. \\
+\hline
+\caption{Danh sách quy tắc nghiệp vụ và cơ chế thực thi}
+\end{longtable}
+
+\section{Nhận xét thiết kế}
+
+Các quy tắc đơn giản như khóa chính, khóa ngoại, giá trị hợp lệ và tính duy nhất được đưa vào DDL. Các quy tắc có tính nghiệp vụ động, ví dụ kiểm tra thiết bị di động đủ điều kiện bảo mật trước khi cấp quyền truy cập, được đóng gói trong stored procedure để tránh thao tác sai từ người vận hành.
+
+\chapter{DỮ LIỆU MẪU}
+
+\section{Mục tiêu dữ liệu mẫu}
+
+Dữ liệu mẫu được thiết kế để bao phủ các trường hợp sau:
+\begin{itemize}
+    \item Có nhiều khoa/phòng với các vai trò nhân sự khác nhau.
+    \item Có nhân sự đã có tài khoản và nhân sự chưa có tài khoản.
+    \item Có cả máy chủ vật lý và máy chủ ảo.
+    \item Có cả máy trạm cố định và thiết bị di động.
+    \item Có thiết bị di động đủ điều kiện bảo mật và chưa đủ điều kiện bảo mật.
+    \item Có quyền truy cập máy chủ đang active và quyền đã bị thu hồi.
+    \item Có dữ liệu audit được sinh tự động từ trigger khi cấp/thu hồi quyền.
+\end{itemize}
+
+\begin{longtable}{|L{4.1cm}|L{3.2cm}|L{6.3cm}|}
+\hline
+\textbf{Nhóm dữ liệu} & \textbf{Số bản ghi} & \textbf{Vai trò kiểm thử} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Nhóm dữ liệu} & \textbf{Số bản ghi} & \textbf{Vai trò kiểm thử} \\
+\hline
+\endhead
+Khoa/phòng & 4 & Kiểm tra quan hệ 1--N giữa khoa/phòng và nhân sự. \\
+\hline
+Nhân sự & 5 & Có một nhân sự chưa có tài khoản để kiểm thử procedure cấp quyền dịch vụ. \\
+\hline
+Tài khoản & 4 & Dùng cho quyền truy cập dịch vụ. \\
+\hline
+Máy chủ & 4 & Gồm 2 máy chủ vật lý và 2 máy chủ ảo. \\
+\hline
+Dịch vụ & 4 & Kiểm tra dịch vụ chạy trên máy chủ. \\
+\hline
+Thiết bị & 6 & Gồm workstation và mobile device. \\
+\hline
+Quyền truy cập máy chủ & 5 & Gồm active và revoked access. \\
+\hline
+Audit quyền truy cập & 5+ & Trigger sinh audit khi seed data và khi chạy procedure cấp/thu hồi quyền. \\
+\hline
+\caption{Tóm tắt dữ liệu mẫu}
+\end{longtable}
+
+\evidencefigure{figures/final-01-run-script.png}{1}{Kết quả chạy toàn bộ script cuối kỳ trong MySQL Workbench}{fig:run-script}
+
+Hình \ref{fig:run-script} dùng để xác nhận script cuối kỳ đã tạo được database, dữ liệu mẫu, index, view, function, procedure, trigger audit, event cleanup disabled và user/grant mà không phát sinh lỗi ngoài các negative test có chủ đích.
+
+\chapter{CÁC CÂU TRUY VẤN SQL}
+
+\section{Danh sách truy vấn}
+
+\begin{longtable}{|L{1.1cm}|L{4.4cm}|L{3.2cm}|L{4.5cm}|}
+\hline
+\textbf{Mã} & \textbf{Business question} & \textbf{Kỹ thuật SQL} & \textbf{Kết quả mong đợi} \\
+\hline
+Q01 & Nhân sự nào thuộc khoa cấp cứu? & \texttt{WHERE}, \texttt{ORDER BY} trên một bảng. & Danh sách nhân sự của \dbid{DEP-ER}, sắp xếp theo họ tên. \\
+\hline
+Q02 & Thiết bị nào đang được phép truy cập máy chủ nào? & \texttt{INNER JOIN} nhiều bảng. & Danh sách active access kèm nhân sự, khoa/phòng, thiết bị và server. \\
+\hline
+Q03 & Nhân sự nào có quyền sử dụng dịch vụ nào? & View có JOIN. & Quyền dịch vụ của từng nhân sự và server host dịch vụ. \\
+\hline
+Q04 & Mobile device nào chưa đủ điều kiện bảo mật? & View có tính toán trạng thái. & Thiết bị mobile được phân loại \dbid{ELIGIBLE}/\dbid{NOT_ELIGIBLE}. \\
+\hline
+Q05 & Server nào đang có tải truy cập đáng chú ý? & \texttt{GROUP BY}, \texttt{HAVING}, function. & Số dịch vụ và số active access trên từng server. \\
+\hline
+Q06 & Khoa/phòng nào có quyền truy cập server active? & CTE tự tổng hợp từ các bảng gốc. & Summary theo khoa/phòng có active access từ 1 trở lên. \\
+\hline
+Q07 & Nhân sự nào chưa có tài khoản? & \texttt{LEFT JOIN} và kiểm tra NULL. & Danh sách nhân sự cần tạo account trước khi cấp quyền dịch vụ. \\
+\hline
+Q08 & Quyền truy cập nào đã bị thu hồi và tồn tại bao lâu? & Date function \texttt{DATEDIFF}. & Lịch sử revoked access kèm số ngày active. \\
+\hline
+Q09 & Trigger đã ghi audit row nào? & Truy vấn bảng audit. & Các bản ghi \dbid{GRANT}/\dbid{REVOKE} trong \dbid{device_server_access_audit}. \\
+\hline
+Q10 & Máy chủ nào chưa host dịch vụ bệnh viện nào? & \texttt{NOT EXISTS}. & Danh sách server chưa có dịch vụ liên kết. \\
+\hline
+\caption{Danh sách truy vấn báo cáo}
+\end{longtable}
+
+\noindent Bảng trên tập trung vào business question, kỹ thuật SQL và kết quả mong đợi để tránh làm bảng quá rộng. Các tham số đầu vào được thể hiện trực tiếp trong từng câu truy vấn, ví dụ \dbid{department_id}, \dbid{server_id}, khoảng ngày hoặc trạng thái active/revoked. Ghi chú hiệu năng chính được liên kết với Chương 10: các truy vấn lọc active access và thiết bị theo loại/ngày đăng ký là workload chính để thiết kế index.
+
+\section{Một số truy vấn đại diện}
+
+\begin{lstlisting}[caption={Q02 - Quyền truy cập máy chủ đang active}]
+SELECT
+  dsa.access_id,
+  CONCAT(sm.last_name, ' ', sm.first_name) AS staff_name,
+  hd.department_name,
+  d.device_id,
+  d.device_type,
+  hs.server_name,
+  hs.server_type,
+  dsa.approved_date
+FROM device_server_access dsa
+JOIN device d ON d.device_id = dsa.device_id
+JOIN staff_member sm ON sm.staff_id = d.staff_id
+JOIN hospital_department hd ON hd.department_id = sm.department_id
+JOIN hospital_server hs ON hs.server_id = dsa.server_id
+WHERE dsa.revoked_date IS NULL
+ORDER BY hs.server_name, staff_name;
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Q05 - Tổng hợp tải của máy chủ}]
+SELECT
+  hs.server_id,
+  hs.server_name,
+  hs.server_type,
+  COUNT(DISTINCT svc.service_id) AS service_count,
+  fn_server_active_access_count(hs.server_id) AS active_access_count
+FROM hospital_server hs
+LEFT JOIN hospital_service svc
+  ON svc.server_id = hs.server_id
+GROUP BY hs.server_id, hs.server_name, hs.server_type
+HAVING active_access_count >= 1
+ORDER BY active_access_count DESC, service_count DESC;
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Q06 - CTE tổng hợp quyền truy cập active theo khoa/phòng}]
+WITH department_access AS (
+  SELECT
+    hd.department_id,
+    hd.department_name,
+    COUNT(DISTINCT sm.staff_id) AS staff_count,
+    COUNT(DISTINCT d.device_id) AS registered_device_count,
+    COUNT(DISTINCT CASE
+      WHEN dsa.revoked_date IS NULL THEN dsa.access_id
+    END) AS active_server_access_count
+  FROM hospital_department hd
+  LEFT JOIN staff_member sm
+    ON sm.department_id = hd.department_id
+  LEFT JOIN device d
+    ON d.staff_id = sm.staff_id
+  LEFT JOIN device_server_access dsa
+    ON dsa.device_id = d.device_id
+  GROUP BY hd.department_id, hd.department_name
+)
+SELECT
+  department_id,
+  department_name,
+  staff_count,
+  registered_device_count,
+  active_server_access_count
+FROM department_access
+WHERE active_server_access_count >= 1
+ORDER BY active_server_access_count DESC;
+\end{lstlisting}
+
+\begin{lstlisting}[caption={Q10 - Máy chủ chưa host dịch vụ nào bằng NOT EXISTS}]
+SELECT
+  hs.server_id,
+  hs.server_name,
+  hs.server_type
+FROM hospital_server hs
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM hospital_service svc
+  WHERE svc.server_id = hs.server_id
+)
+ORDER BY hs.server_id;
+\end{lstlisting}
+
+\evidencefigure{figures/final-02-query-results.png}{1}{Kết quả chạy các truy vấn báo cáo Q02 và Q05}{fig:query-results}
+
+\chapter{VIEW}
+
+\section{Danh sách view}
+
+\begin{longtable}{|L{5.2cm}|L{8.4cm}|}
+\hline
+\normalfont\normalsize\textbf{View} & \textbf{Mục đích} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{View} & \textbf{Mục đích} \\
+\hline
+\endhead
+\tabdbid{vw_staff_device_inventory} & Tổng hợp nhân sự, khoa/phòng và thiết bị đang đăng ký. \\
+\hline
+\tabdbid{vw_active_device_server_access} & Hiển thị các quyền truy cập máy chủ đang active. \\
+\hline
+\tabdbid{vw_staff_service_permissions} & Hiển thị nhân sự được cấp quyền sử dụng dịch vụ nào và dịch vụ đó chạy trên server nào. \\
+\hline
+\tabdbid{vw_mobile_security_status} & Kiểm tra trạng thái bảo mật của thiết bị di động. \\
+\hline
+\tabdbid{vw_department_access_summary} & Tổng hợp số nhân sự, số thiết bị và số quyền truy cập active theo khoa/phòng. \\
+\hline
+\caption{Danh sách view trong bài cuối kỳ}
+\end{longtable}
+
+Các view trong báo cáo được thiết kế cho mục đích đọc dữ liệu và reporting, không dùng làm giao diện cập nhật trực tiếp. Lý do là phần lớn view có \texttt{JOIN}, tính toán trạng thái hoặc tổng hợp nhiều bảng; nếu cho phép cập nhật qua view sẽ dễ làm mơ hồ bảng nguồn cần thay đổi. Các thao tác làm thay đổi dữ liệu nghiệp vụ được kiểm soát bằng stored procedure và ràng buộc trong schema.
+
+\begin{lstlisting}[caption={View hiển thị quyền truy cập máy chủ đang active}]
+CREATE OR REPLACE VIEW vw_active_device_server_access AS
+SELECT
+  dsa.access_id,
+  dsa.device_id,
+  d.device_type,
+  CONCAT(sm.last_name, ' ', sm.first_name) AS staff_name,
+  hd.department_name,
+  dsa.server_id,
+  hs.server_name,
+  hs.server_type,
+  dsa.approved_date
+FROM device_server_access dsa
+JOIN device d ON d.device_id = dsa.device_id
+JOIN staff_member sm ON sm.staff_id = d.staff_id
+JOIN hospital_department hd ON hd.department_id = sm.department_id
+JOIN hospital_server hs ON hs.server_id = dsa.server_id
+WHERE dsa.revoked_date IS NULL;
+\end{lstlisting}
+
+\evidencefigure{figures/final-03-view-results.png}{1}{Kết quả truy vấn từ các view cuối kỳ}{fig:view-results}
+
+\chapter{STORED FUNCTION}
+
+\section{Danh sách function}
+
+\begin{longtable}{|L{5.0cm}|L{4.8cm}|L{3.8cm}|}
+\hline
+\normalfont\normalsize\textbf{Function} & \textbf{Mục đích} & \textbf{Giá trị trả về} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Function} & \textbf{Mục đích} & \textbf{Giá trị trả về} \\
+\hline
+\endhead
+\tabdbid{fn_staff_device_count} & Đếm số thiết bị thuộc một nhân sự. & Số nguyên. \\
+\hline
+\tabdbid{fn_mobile_security_label} & Trả về nhãn bảo mật của thiết bị. & \dbid{SECURE}, \dbid{INSECURE}, \dbid{NOT_MOBILE}, \dbid{NOT_FOUND}. \\
+\hline
+\tabdbid{fn_server_active_access_count} & Đếm số quyền truy cập active của một máy chủ. & Số nguyên. \\
+\hline
+\caption{Danh sách stored function}
+\end{longtable}
+
+\begin{lstlisting}[caption={Function kiểm tra nhãn bảo mật thiết bị mobile}]
+CREATE FUNCTION fn_mobile_security_label(p_device_id VARCHAR(20))
+RETURNS VARCHAR(20)
+READS SQL DATA
+NOT DETERMINISTIC
+BEGIN
+  DECLARE v_device_type VARCHAR(12);
+  DECLARE v_security TINYINT;
+
+  SELECT device_type
+  INTO v_device_type
+  FROM device
+  WHERE device_id = p_device_id;
+
+  IF v_device_type IS NULL THEN
+    RETURN 'NOT_FOUND';
+  END IF;
+
+  IF v_device_type <> 'MOBILE' THEN
+    RETURN 'NOT_MOBILE';
+  END IF;
+
+  SELECT security_eligible
+  INTO v_security
+  FROM mobile_device
+  WHERE device_id = p_device_id;
+
+  IF v_security = 1 THEN
+    RETURN 'SECURE';
+  END IF;
+
+  RETURN 'INSECURE';
+END;
+\end{lstlisting}
+
+Các function đều khai báo \texttt{READS SQL DATA} và \texttt{NOT DETERMINISTIC} vì kết quả phụ thuộc vào dữ liệu hiện tại trong các bảng, không chỉ phụ thuộc vào tham số đầu vào. Cách khai báo này phù hợp hơn với ý nghĩa của stored function trong MySQL khi function có truy vấn \texttt{SELECT} từ bảng.
+
+\evidencefigure{figures/final-04-function-results.png}{1}{Kết quả chạy stored function}{fig:function-results}
+
+\chapter{STORED PROCEDURE}
+
+\section{Danh sách procedure}
+
+\begin{longtable}{|L{5.2cm}|L{5.0cm}|L{3.4cm}|}
+\hline
+\normalfont\normalsize\textbf{Procedure} & \textbf{Mục đích} & \textbf{Rule liên quan} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Procedure} & \textbf{Mục đích} & \textbf{Rule liên quan} \\
+\hline
+\endhead
+\tabdbid{sp_grant_device_server_access} & Cấp quyền cho thiết bị truy cập máy chủ, đồng thời kiểm tra thiết bị, máy chủ, bảo mật mobile và trùng active access. & BR06--BR09 \\
+\hline
+\tabdbid{sp_revoke_device_server_access} & Thu hồi một quyền truy cập đang active. & BR10--BR12 \\
+\hline
+\tabdbid{sp_grant_staff_service_access} & Cấp quyền dịch vụ cho nhân sự đã có tài khoản và dịch vụ hợp lệ. & BR02, BR13--BR15 \\
+\hline
+\caption{Danh sách stored procedure}
+\end{longtable}
+
+\begin{lstlisting}[caption={Procedure cấp quyền truy cập thiết bị vào server}]
+CALL sp_grant_device_server_access(
+  'DEV-W-003',
+  'SRV-PHY-01',
+  '2026-03-05'
+);
+\end{lstlisting}
+
+Procedure trên kiểm tra trước khi thêm bản ghi vào \dbid{device_server_access}. Nếu thiết bị không tồn tại, server không tồn tại, mobile device chưa đủ điều kiện bảo mật hoặc cặp thiết bị--server đã có quyền active, procedure sẽ dừng bằng \texttt{SIGNAL SQLSTATE '45000'}.
+
+Với thiết bị mobile, procedure dùng \dbid{COALESCE(v_security, 0)} khi kiểm tra bảo mật. Nhờ vậy, nếu dữ liệu subtype \dbid{mobile_device} bị thiếu hoặc trạng thái bảo mật trả về NULL, thiết bị vẫn bị xem là chưa đủ điều kiện và không thể được cấp quyền truy cập server.
+
+Về concurrency, procedure đóng vai trò kiểm tra nghiệp vụ và trả thông báo lỗi dễ hiểu trước khi ghi dữ liệu. Tuy nhiên tính đúng đắn cuối cùng vẫn được bảo vệ ở tầng schema bằng \dbid{uq_device_server_one_active} và khóa chính của \dbid{staff_service_access}. Nếu hai phiên làm việc gọi procedure đồng thời và cùng vượt qua bước kiểm tra ban đầu, unique constraint/primary key vẫn chặn bản ghi trùng ở thời điểm \texttt{INSERT}. Đây là thiết kế phòng thủ hai lớp: stored procedure giúp vận hành rõ ràng, còn constraint bảo vệ tính nhất quán dữ liệu.
+
+\evidencefigure{figures/final-05-procedure-results.png}{1}{Kết quả chạy stored procedure thành công}{fig:procedure-results}
+
+\chapter{TRIGGER, EVENT VÀ AUDIT}
+
+\section{Mục tiêu trigger}
+
+Trigger được dùng để tự động ghi nhận lịch sử thay đổi của bảng \dbid{device_server_access}. Khi một quyền truy cập mới được cấp, trigger ghi một dòng \dbid{GRANT}. Khi quyền truy cập đang active được cập nhật \dbid{revoked_date}, trigger ghi một dòng \dbid{REVOKE}. Cách làm này giúp phần audit không phụ thuộc vào việc người vận hành có nhớ insert thủ công vào bảng log hay không.
+
+\begin{longtable}{|L{5.2cm}|L{4.0cm}|L{4.4cm}|}
+\hline
+\normalfont\normalsize\textbf{Trigger} & \textbf{Thời điểm} & \textbf{Side effect} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Trigger} & \textbf{Thời điểm} & \textbf{Side effect} \\
+\hline
+\endhead
+\tabdbid{trg_ai_device_server_access_audit} & \texttt{AFTER INSERT} trên \dbid{device_server_access}. & Ghi audit row loại \dbid{GRANT}. \\
+\hline
+\tabdbid{trg_au_device_server_access_audit} & \texttt{AFTER UPDATE} trên \dbid{device_server_access}. & Nếu \dbid{revoked_date} chuyển từ NULL sang khác NULL, ghi audit row loại \dbid{REVOKE}. \\
+\hline
+\caption{Trigger audit trong bài cuối kỳ}
+\end{longtable}
+
+\begin{lstlisting}[caption={Trigger ghi audit khi thu hồi quyền truy cập}]
+CREATE TRIGGER trg_au_device_server_access_audit
+AFTER UPDATE ON device_server_access
+FOR EACH ROW
+BEGIN
+  IF OLD.revoked_date IS NULL AND NEW.revoked_date IS NOT NULL THEN
+    INSERT INTO device_server_access_audit
+      (access_id, device_id, server_id, action_type,
+       old_revoked_date, new_revoked_date, action_user)
+    VALUES
+      (NEW.access_id, NEW.device_id, NEW.server_id, 'REVOKE',
+       OLD.revoked_date, NEW.revoked_date, USER());
+  END IF;
+END;
+\end{lstlisting}
+
+Test của trigger được thực hiện thông qua procedure \dbid{sp_grant_device_server_access} và \dbid{sp_revoke_device_server_access}. Sau khi gọi procedure, truy vấn \dbid{SELECT * FROM device_server_access_audit} phải cho thấy các dòng audit tương ứng với thao tác cấp hoặc thu hồi quyền.
+
+Một số dòng audit ban đầu được sinh khi seed data insert trực tiếp các bản ghi lịch sử vào \dbid{device_server_access}. Vì vậy có thể có dòng \dbid{GRANT} đã kèm \dbid{new_revoked_date}; đây là dữ liệu lịch sử phục vụ kiểm thử, còn thao tác thu hồi trong vận hành được thực hiện qua procedure và tạo audit row loại \dbid{REVOKE}.
+
+\evidencefigure{figures/final-09-trigger-audit.png}{1}{Kết quả kiểm tra bảng audit do trigger sinh ra}{fig:trigger-audit}
+
+\section{Event cleanup trong môi trường lab}
+
+Event được bổ sung như một use case vận hành nâng cao: dọn các dòng audit quá cũ theo chính sách lưu giữ dữ liệu. Trong môi trường lab, event được tạo với trạng thái \texttt{DISABLE}, nghĩa là script chứng minh được thiết kế event nhưng không tự động xóa dữ liệu khi người chấm chạy thử. Nếu triển khai thật, người quản trị cần bật Event Scheduler, xác nhận retention policy và kiểm tra backup trước khi enable event.
+
+\begin{lstlisting}[caption={Event dọn audit log cũ ở trạng thái DISABLE}]
+CREATE EVENT ev_cleanup_old_access_audit
+ON SCHEDULE EVERY 1 MONTH
+DISABLE
+DO
+BEGIN
+  DELETE FROM device_server_access_audit
+  WHERE action_time < CURRENT_TIMESTAMP - INTERVAL 365 DAY;
+END;
+
+SHOW EVENTS
+FROM medlink_hospital_access
+LIKE 'ev_cleanup_old_access_audit';
+\end{lstlisting}
+
+Event này có side effect là xóa các bản ghi audit vượt quá thời gian lưu giữ. Vì vậy event không được bật mặc định trong bài nộp; câu \texttt{SHOW EVENTS} dùng để kiểm tra event đã được tạo và đang ở trạng thái an toàn.
+
+\chapter{INDEX VÀ EXECUTION PLAN}
+
+\section{Index candidates}
+
+\begin{longtable}{|L{5.1cm}|L{4.2cm}|L{4.3cm}|}
+\hline
+\normalfont\normalsize\textbf{Index} & \textbf{Workload hỗ trợ} & \textbf{Trade-off} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{Index} & \textbf{Workload hỗ trợ} & \textbf{Trade-off} \\
+\hline
+\endhead
+\tabdbid{idx_dsa_server_revoked_device} & Lọc quyền truy cập theo \dbid{server_id}, trạng thái active/revoked và sắp xếp theo thiết bị. & Tăng tốc truy vấn báo cáo active access, nhưng làm INSERT/UPDATE bảng quyền truy cập tốn thêm chi phí ghi index. \\
+\hline
+\tabdbid{idx_device_type_registered_staff} & Lọc thiết bị theo loại và ngày đăng ký, phục vụ audit thiết bị mobile hoặc workstation. & Hữu ích cho truy vấn inventory, nhưng không nên tạo thêm index cho mọi cột nếu workload chưa cần. \\
+\hline
+\caption{Index được bổ sung theo workload}
+\end{longtable}
+
+\begin{lstlisting}[caption={SHOW INDEX và EXPLAIN cho truy vấn active access}]
+SHOW INDEX FROM device_server_access;
+
+EXPLAIN
+SELECT
+  dsa.access_id,
+  dsa.device_id,
+  dsa.server_id,
+  dsa.approved_date
+FROM device_server_access dsa
+WHERE dsa.server_id = 'SRV-VIR-01'
+  AND dsa.revoked_date IS NULL
+ORDER BY dsa.device_id;
+\end{lstlisting}
+
+\begin{lstlisting}[caption={EXPLAIN cho truy vấn lọc thiết bị theo loại và ngày đăng ký}]
+EXPLAIN
+SELECT
+  d.device_id,
+  d.staff_id,
+  d.registered_date
+FROM device d
+WHERE d.device_type = 'MOBILE'
+  AND d.registered_date >= '2026-01-01'
+ORDER BY d.registered_date;
+\end{lstlisting}
+
+Với dữ liệu mẫu nhỏ, MySQL Optimizer có thể vẫn chọn scan bảng vì chi phí đọc toàn bảng thấp. Do đó phần \texttt{EXPLAIN} được dùng để kiểm tra \dbid{possible_keys}, \texttt{key}, \texttt{rows} và \texttt{Extra}, đồng thời giải thích index nào được thiết kế cho workload nào thay vì tạo index theo số lượng.
+
+\evidencefigure{figures/final-08-index-explain.png}{1.2}{Kết quả EXPLAIN cho truy vấn active access sử dụng index}{fig:index-explain}
+
+Index thứ hai, \dbid{idx_device_type_registered_staff}, được kiểm tra bằng truy vấn lọc thiết bị theo \dbid{device_type} và khoảng \dbid{registered_date}. Khi chụp minh chứng bổ sung, nhóm có thể chạy riêng listing trên và thay hình \ref{fig:index-explain} bằng ảnh chứa cả hai kết quả \texttt{EXPLAIN}. Với dữ liệu mẫu nhỏ, mục tiêu chính là chứng minh index được thiết kế theo workload cụ thể, không phải ép optimizer luôn chọn index trong mọi trường hợp.
+
+\chapter{TẠO NGƯỜI DÙNG VÀ PHÂN QUYỀN}
+
+\section{Vai trò người dùng}
+
+\begin{longtable}{|L{3.5cm}|L{3.7cm}|L{6.3cm}|}
+\hline
+\normalfont\normalsize\textbf{User/Role} & \textbf{Quyền chính} & \textbf{Mục đích} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{User/Role} & \textbf{Quyền chính} & \textbf{Mục đích} \\
+\hline
+\endhead
+\tabdbid{medlink_admin} & \texttt{ALL PRIVILEGES} trên database. & Quản trị toàn bộ CSDL. \\
+\hline
+\tabdbid{role_medlink_reporter} & \texttt{SELECT} trên toàn bộ database. & Role chỉ đọc dữ liệu, gán cho user báo cáo. \\
+\hline
+\tabdbid{role_medlink_operator} & \texttt{SELECT, INSERT, UPDATE} trên bảng quyền truy cập và \texttt{SELECT} trên view vận hành. & Role vận hành cấp/thu hồi quyền. \\
+\hline
+\tabdbid{medlink_reporter} & Default role: \dbid{role_medlink_reporter}. & Tài khoản người dùng báo cáo. \\
+\hline
+\tabdbid{medlink_operator} & Default role: \dbid{role_medlink_operator}. & Tài khoản người vận hành. \\
+\hline
+\caption{User và role MySQL}
+\end{longtable}
+
+\begin{lstlisting}[caption={Tạo role, user và gán quyền tối thiểu}]
+CREATE ROLE 'role_medlink_reporter';
+
+CREATE USER 'medlink_reporter'@'localhost'
+  IDENTIFIED BY 'MedlinkReporter@2026';
+
+GRANT SELECT
+  ON medlink_hospital_access.*
+  TO 'role_medlink_reporter';
+
+GRANT 'role_medlink_reporter'
+  TO 'medlink_reporter'@'localhost';
+
+SET DEFAULT ROLE 'role_medlink_reporter'
+  TO 'medlink_reporter'@'localhost';
+
+SHOW GRANTS FOR 'medlink_reporter'@'localhost';
+\end{lstlisting}
+
+\evidencefigure{figures/final-06-user-grants.png}{1}{Kết quả tạo user/role và hiển thị quyền bằng SHOW GRANTS}{fig:user-grants}
+
+\normalfont\normalsize\selectfont
+
+\section{Backup và restore trong môi trường lab}
+
+\normalfont\normalsize\selectfont
+
+Backup/restore được thiết kế cho môi trường MySQL local. Password không được ghi trực tiếp trong báo cáo hoặc source code; khi chạy lệnh, MySQL sẽ yêu cầu nhập password tương tác.
+
+\begin{lstlisting}[caption={Runbook backup và restore local}]
+-- Backup from terminal:
+mysqldump -u root -p --routines --triggers --events medlink_hospital_access > medlink_hospital_access_YYYYMMDD.sql
+
+-- Restore to a separate test database:
+CREATE DATABASE medlink_hospital_access_restore_test
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+mysql -u root -p medlink_hospital_access_restore_test < medlink_hospital_access_YYYYMMDD.sql
+\end{lstlisting}
+
+\normalfont\normalsize\selectfont
+
+Việc restore được thực hiện vào schema test riêng, không restore đè lên database nguồn. File dump có thể chứa schema, dữ liệu mẫu, routines, trigger và event, vì vậy cần lưu ở nơi an toàn và không gửi kèm password thật.
+
+\normalfont\normalsize\selectfont
+
+\section{Gói file nộp}
+
+Bên cạnh script tổng \dbid{topic08_medlink_final.sql}, nhóm tách mã nguồn thành các file nhỏ theo chức năng để người chấm có thể đọc và chạy từng phần: \dbid{01_schema.sql}, \dbid{02_seed_data.sql}, \dbid{03_queries.sql}, \dbid{04_views.sql}, \dbid{05_routines.sql}, \dbid{06_triggers_events.sql}, \dbid{07_indexes_explain.sql}, \dbid{08_admin_backup.md} và \dbid{09_tests.sql}. File \dbid{README.md} mô tả môi trường MySQL 8.0.16+ vì bài sử dụng \texttt{CHECK} constraint được enforce, thứ tự chạy script và lưu ý không nộp password thật.
+
+\normalfont\normalsize\selectfont
+
+\chapter{KIỂM THỬ VÀ ĐỐI CHIẾU}
+
+\normalfont\normalsize\selectfont
+
+\section{Positive tests}
+
+\normalfont\normalsize\selectfont
+
+\begin{longtable}{|L{1.4cm}|L{4.6cm}|L{4.0cm}|L{3.4cm}|}
+\hline
+\textbf{TC} & \textbf{Thao tác} & \textbf{Kết quả mong đợi} & \textbf{Kết quả thực tế} \\
+\hline
+\endfirsthead
+\hline
+\textbf{TC} & \textbf{Thao tác} & \textbf{Kết quả mong đợi} & \textbf{Kết quả thực tế} \\
+\hline
+\endhead
+POS-01 & Gọi function đếm thiết bị cho \dbid{STF-001}. & Trả về số thiết bị của nhân sự \dbid{STF-001}. & PASS, trả về scalar count. \\
+\hline
+POS-02 & Gọi function nhãn bảo mật cho từng thiết bị. & Phân loại được \dbid{SECURE}, \dbid{INSECURE}, \dbid{NOT_MOBILE}. & PASS, có đủ các nhãn kiểm thử. \\
+\hline
+POS-03 & Gọi procedure cấp quyền dịch vụ cho \dbid{STF-003}/\dbid{SVC-COM}. & Thêm quyền dịch vụ mới cho nhân sự có tài khoản. & PASS, thêm 1 dòng quyền dịch vụ. \\
+\hline
+POS-04 & Gọi procedure cấp quyền server cho \dbid{DEV-W-003}/\dbid{SRV-PHY-01}. & Thêm quyền truy cập server mới. & PASS, thêm 1 dòng quyền server. \\
+\hline
+POS-05 & Gọi \dbid{sp_revoke_device_server_access}. & Cập nhật \dbid{revoked_date}; bản ghi không còn xuất hiện trong active view. & PASS, active view không còn dòng bị thu hồi. \\
+\hline
+POS-06 & Truy vấn \dbid{device_server_access_audit} sau khi cấp/thu hồi quyền. & Có audit row loại \dbid{GRANT} hoặc \dbid{REVOKE}. & PASS, audit table có dòng mới. \\
+\hline
+POS-07 & Chạy \texttt{SHOW GRANTS} cho các user/role local. & Quyền của admin, reporter và operator đúng theo vai trò. & PASS, role/user hiển thị đúng grant. \\
+\hline
+POS-08 & Chạy \texttt{SHOW EVENTS} cho event cleanup. & Event tồn tại và ở trạng thái disabled trong lab. & PASS, event được tạo nhưng không tự chạy. \\
+\hline
+\caption{Positive test cases}
+\end{longtable}
+\clearpage
+\section{Negative tests}
+
+\begin{longtable}{|L{1.4cm}|L{4.8cm}|L{4.0cm}|L{3.6cm}|}
+\hline
+\textbf{TC} & \textbf{Thao tác lỗi} & \textbf{Kết quả mong đợi} & \textbf{Kết quả thực tế} \\
+\hline
+\endfirsthead
+\hline
+\textbf{TC} & \textbf{Thao tác lỗi} & \textbf{Kết quả mong đợi} & \textbf{Kết quả thực tế} \\
+\hline
+\endhead
+NEG-01 & Cấp quyền server cho mobile device chưa bật mã hóa dữ liệu. & Lỗi \texttt{BR08}. & PASS, procedure trả \texttt{SIGNAL}. \\
+\hline
+NEG-02 & Cấp trùng quyền active cho cùng cặp thiết bị--server. & Lỗi \texttt{BR09}. & PASS, trùng active bị chặn. \\
+\hline
+NEG-03 & Cấp quyền dịch vụ cho nhân sự chưa có account. & Lỗi \texttt{BR13}. & PASS, procedure trả \texttt{SIGNAL}. \\
+\hline
+NEG-04 & Thu hồi với ngày nhỏ hơn ngày phê duyệt. & Lỗi \texttt{BR12}. & PASS, ngày sai bị từ chối. \\
+\hline
+NEG-05 & Insert máy chủ có \dbid{server_type} không hợp lệ. & Lỗi \texttt{CHECK}. & PASS, constraint từ chối dữ liệu. \\
+\hline
+\caption{Negative test cases}
+\end{longtable}
+
+\evidencefigure{figures/final-07-negative-test.png}{1}{Minh chứng một negative test trả về lỗi mong đợi}{fig:negative-test}
+
+\chapter{TỔNG KẾT}
+
+\section{Kết quả đạt được}
+
+\begin{longtable}{|L{4.2cm}|L{9.3cm}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Kết quả} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tiêu chí} & \textbf{Kết quả} \\
+\hline
+\endhead
+Thiết kế final & Có ERD final, change log, mô hình quan hệ, data dictionary rút gọn và nhận xét chuẩn hóa. \\
+\hline
+Dữ liệu mẫu & Có dữ liệu cho toàn bộ bảng chính, bao phủ cả trường hợp active/revoked access và mobile secure/insecure. \\
+\hline
+Truy vấn SQL & Có 10 truy vấn báo cáo, sử dụng filter/order, join, group by/having, CTE, date function, function, view, audit table và \texttt{NOT EXISTS}. \\
+\hline
+View & Có 5 view phục vụ inventory, active access, service permission, mobile security và department summary. \\
+\hline
+Stored function & Có 3 function trả về số lượng hoặc nhãn trạng thái. \\
+\hline
+Stored procedure & Có 3 procedure đóng gói nghiệp vụ cấp/thu hồi quyền. \\
+\hline
+Trigger/Event & Có 2 trigger ghi audit cho thao tác cấp và thu hồi quyền truy cập server; có 1 event cleanup audit log ở trạng thái \texttt{DISABLE}. \\
+\hline
+Index và EXPLAIN & Có 2 secondary index theo workload, kèm \texttt{SHOW INDEX} và \texttt{EXPLAIN}. \\
+\hline
+User, role và phân quyền & Có 3 user và 2 role tương ứng reporter/operator theo nguyên tắc least privilege. \\
+\hline
+Backup/restore & Có runbook backup bằng \texttt{mysqldump} kèm routines, triggers, events và restore vào schema test riêng. \\
+\hline
+Gói file nộp & Có script tổng và các file tách theo chức năng: schema, seed data, queries, views, routines, triggers/events, indexes, admin/backup và tests. \\
+\hline
+Kiểm thử & Có positive tests và negative tests để chứng minh ràng buộc hoạt động. \\
+\hline
+\caption{Tổng kết kết quả cuối kỳ}
+\end{longtable}
+
+\section{Kết luận}
+
+Bài cuối kỳ đã biến thiết kế cơ sở dữ liệu MedLink từ mức mô hình và DDL thành một hệ thống có thể vận hành. Các view giúp truy vấn dữ liệu thuận tiện hơn; function cung cấp các giá trị tính toán tái sử dụng; procedure kiểm soát các thao tác nghiệp vụ quan trọng; trigger tạo audit trail cho thay đổi quyền truy cập; event cleanup thể hiện hướng vận hành log an toàn trong lab; index và \texttt{EXPLAIN} giúp giải thích hướng tối ưu truy vấn; user, role và grant mô phỏng phân quyền sử dụng hệ thống. Bộ test case và runbook backup/restore giúp đối chiếu thiết kế với hành vi thực tế trên MySQL Workbench và môi trường MySQL local.
+
+\appendix
+\chapter{PHỤ LỤC GÓI MÃ NGUỒN}
+
+\section{Danh sách file nộp kèm}
+
+\begin{longtable}{|L{5.2cm}|L{8.4cm}|}
+\hline
+\normalfont\normalsize\textbf{File} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\normalfont\normalsize\textbf{File} & \textbf{Nội dung} \\
+\hline
+\endhead
+\dbid{README.md} & Mô tả môi trường MySQL 8.0.16+, thứ tự chạy script, user demo và backup/restore. \\
+\hline
+\dbid{topic08_medlink_final.sql} & Script tổng có thể chạy từ đầu đến cuối để tạo toàn bộ database, dữ liệu mẫu, view, routines, trigger/event, index, test và user/role. \\
+\hline
+\dbid{01_schema.sql} & Tạo database, reset object và tạo các bảng/ràng buộc chính. \\
+\hline
+\dbid{02_seed_data.sql} & Thêm dữ liệu mẫu phục vụ query, view, routine và trigger audit. \\
+\hline
+\dbid{03_queries.sql} & Các truy vấn báo cáo Q01--Q10. \\
+\hline
+\dbid{04_views.sql} & Định nghĩa các view và truy vấn kiểm thử view. \\
+\hline
+\dbid{05_routines.sql} & Stored functions và stored procedures. \\
+\hline
+\dbid{06_triggers_events.sql} & Trigger audit và event cleanup ở trạng thái \texttt{DISABLE}. \\
+\hline
+\dbid{07_indexes_explain.sql} & Tạo secondary index, \texttt{SHOW INDEX} và \texttt{EXPLAIN}. \\
+\hline
+\dbid{08_admin_backup.md} & Lệnh tạo user/role/grant local lab và runbook backup/restore. \\
+\hline
+\dbid{09_tests.sql} & Positive tests và các negative tests được comment để chạy từng lỗi một. \\
+\hline
+\caption{Danh sách mã nguồn và tài liệu nộp kèm}
+\end{longtable}
+
+\section{Thứ tự chạy đề xuất}
+
+Để chạy nhanh toàn bộ bài, người chấm có thể mở \dbid{topic08_medlink_final.sql} trong MySQL Workbench và chạy từ đầu đến cuối. Nếu muốn kiểm tra theo từng phần, thứ tự chạy các file tách là:
+
+\begin{enumerate}
+    \item \dbid{01_schema.sql}
+    \item \dbid{06_triggers_events.sql}
+    \item \dbid{02_seed_data.sql}
+    \item \dbid{07_indexes_explain.sql}
+    \item \dbid{04_views.sql}
+    \item \dbid{05_routines.sql}
+    \item \dbid{03_queries.sql}
+    \item \dbid{09_tests.sql}
+\end{enumerate}
+
+Các lệnh quản trị user/role và backup/restore được trình bày trong \dbid{08_admin_backup.md}. Negative tests trong \dbid{09_tests.sql} được để ở dạng comment và cần chạy từng test một vì mỗi test được thiết kế để phát sinh lỗi mong đợi.
+
+\end{document}
